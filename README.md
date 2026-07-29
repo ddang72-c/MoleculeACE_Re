@@ -8,10 +8,10 @@
 
 | 계열 | 구성 | 개수 | 상태 |
 |---|---|--:|---|
-| 전통 ML | 모델 4종(SVM·RF·GBM·KNN) × 표현 4종(ECFP·MACCS·PHYSCHEM·WHIM) | **16** | ✅ 완료 (480셀) |
-| **MLP + ECFP** | 신경망 기준선 | **1** | ✅ 완료 (30셀) |
-| 그래프 신경망 | GCN · GAT · MPNN · AFP | 4 | ⏸️ 진행 중 |
-| SMILES 딥러닝 | LSTM · CNN · Transformer | 3 | ⏸️ 진행 중 |
+| 전통 ML | 모델 4종(SVM·RF·GBM·KNN) × 표현 4종(ECFP·MACCS·PHYSCHEM·WHIM) | **16** |  완료 (480셀) |
+| **MLP + ECFP** | 신경망 기준선 | **1** |  완료 (30셀) |
+| 그래프 신경망 | GCN · GAT · MPNN · AFP | 4 |  진행 중 |
+| SMILES 딥러닝 | LSTM · CNN · Transformer | 3 |  진행 중 |
 
 **17 × 30표적 = 510셀.** 나머지 7종은 코드(`scripts/run_deep.py`)와 재현에 필요한 지식은
 아래에 정리돼 있으나 **수치는 아직 확정하지 않았다** — 이유는 「비용」 절 참조.
@@ -40,7 +40,7 @@
 평균 차이는 16조합 전부 **0.0064 이내**다. 표적별 상세는
 [`results/ml16_reproduction.csv`](results/ml16_reproduction.csv).
 
-## ⚠️ 셀 단위로는 조합마다 갈린다
+## 셀 단위로는 조합마다 갈린다
 
 `ECFP+SVM`과 `MACCS+SVM`만 30/30 정확히 맞고 나머지는 안 맞는다. **세 가지 원인이 겹쳐 있다.**
 
@@ -156,9 +156,9 @@ rmse = sum(rmse)/len(rmse)                    # 5겹 평균
 |---|---|---|---|
 | 1 | `GraphMultisetTransformer` 인자 오류 (GCN·GAT·MPNN) | PyG 2.5+ 시그니처 변경 | `pyg_compat.py` |
 | 2 | `fit() got 'use_multiprocessing'` (LSTM) | Keras 3 가 인자 제거 | `keras_compat.py` |
-| 3 | 🚨 `'LSTM' has no attribute 'model'` | **사전학습 가중치가 배포본에 없다** | `pretrained_model=None` |
+| 3 | `'LSTM' has no attribute 'model'` | **사전학습 가중치가 배포본에 없다** | `pretrained_model=None` |
 | 4 | `'>=' int vs NoneType` (Transformer) | config 에 `epochs` 없음 → `None` 유입 | 클래스 기본값 조회 |
-| 5 | ⭐ 엉뚱한 모델이 로드됨 | **`save_path` 가 상대경로** — 병렬 실행 시 체크포인트 충돌 | 프로세스별 작업 디렉터리 |
+| 5 | 엉뚱한 모델이 로드됨 | **`save_path` 가 상대경로** — 병렬 실행 시 체크포인트 충돌 | 프로세스별 작업 디렉터리 |
 | 6 | 맥에서 GPU 미사용 | `"cuda:0" if cuda.is_available() else "cpu"` 하드코딩 | `device_compat.py` |
 
 **③⑤가 조용히 위험하다.** ③ 때문에 **공식 LSTM 수치(0.7423)는 배포 산출물만으로 재현 불가**다
@@ -177,7 +177,7 @@ MPNN 14.5시간  (1겹에 2시간 54분)  → 30표적 = 18일
 원저자는 GPU 로 돌렸다(`benchmark.py` 첫 줄이 `list_physical_devices('GPU')`).
 전통 ML 480셀이 1시간인 것과 차원이 다르다.
 
-### ⚠️ 맥 GPU(MPS)는 모델마다 유불리가 갈린다
+### 맥 GPU(MPS)는 모델마다 유불리가 갈린다
 
 ```
 MPNN  5에폭 · 2,201분자   CPU 341.3초  →  MPS  54.9초   (6.2배 빠름)
@@ -185,7 +185,7 @@ GCN   3에폭 · 615분자     CPU   5.5초  →  MPS  11.1초   (2배 느림)
 ```
 
 분자 그래프가 작아 커널 실행 오버헤드가 계산량을 넘기 쉽고, 손익분기가 모델 무게에 따라 갈린다.
-`--device mps` 로 켠다. ⚠️ **MPS 수치는 CPU 와 정확히 일치하지 않는다** — 결과 CSV 의 `device` 열을 함께 인용할 것.
+`--device mps` 로 켠다. **MPS 수치는 CPU 와 정확히 일치하지 않는다** — 결과 CSV 의 `device` 열을 함께 인용할 것.
 
 ## 실행
 
@@ -194,7 +194,7 @@ GCN   3에폭 · 615분자     CPU   5.5초  →  MPS  11.1초   (2배 느림)
 ./mace-env/bin/python scripts/run_deep.py --models GCN GAT --targets CHEMBL204_Ki
 ```
 
-⚠️ **여러 모델을 동시에 돌릴 때는 반드시 서로 다른 작업 디렉터리에서** 실행할 것(고장 ⑤).
+ **여러 모델을 동시에 돌릴 때는 반드시 서로 다른 작업 디렉터리에서** 실행할 것(고장 ⑤).
 
 ## 다음
 
