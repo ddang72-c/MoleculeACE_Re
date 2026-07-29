@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+mace-env/
+data/
+best_model.pkl
+best_model.h5
+results/shards/
+results/probe_*.csv
