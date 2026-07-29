@@ -122,7 +122,7 @@ SVM+ECFP는 30표적에 약 20초, WHIM은 컨포머 생성 때문에 표적당 
 
 `scripts/run_deep.py`
 
-## 🚨 먼저 — 공식 딥러닝 프로토콜은 단일 학습이 아니다
+##  먼저 — 공식 딥러닝 프로토콜은 단일 학습이 아니다
 
 공식 [`Experiments/benchmark.py`](https://github.com/molML/MoleculeACE/blob/main/Experiments/benchmark.py)를 보면
 딥러닝 계열(RF·SVM·GBM·KNN 제외 전부)은 이렇게 학습된다.
@@ -137,11 +137,8 @@ rmse = sum(rmse)/len(rmse)                    # 5겹 평균
 ```
 
 **5겹 교차검증 평균 + patience 10 조기종료 + SMILES/TOKENS 10배 증강.**
-셋 중 하나라도 빠지면 재현이 아니라 다른 실험이다.
-셋을 다 빼고 단일 학습했을 때 Transformer 가 0.514 로 공식(0.7317)보다 "좋게" 나온 적이 있는데,
-개선이 아니라 비교 대상이 아니었던 것이다.
 
-⚠️ **전통 ML 16조합은 영향 없다** — 공식도 단일 학습이므로 위 재현은 그대로 유효하다.
+
 
 ## 결과 — MLP + ECFP (30/30 완료)
 
@@ -152,9 +149,6 @@ rmse = sum(rmse)/len(rmse)                    # 5겹 평균
 표적별 상세는 [`results/mlp_ecfp_reproduction.csv`](results/mlp_ecfp_reproduction.csv).
 전체 평균이 -0.028 로 맞고, **절벽 격차(0.0738 vs 공식 0.0701)까지 재현된다.**
 
-⏸️ **나머지 7종(GCN·GAT·MPNN·AFP·CNN·LSTM·Transformer)은 수치를 확정하지 않았다.**
-표본이 작아 판정할 수 없고, 완주 비용이 아래와 같기 때문이다.
-코드는 동작하며 아래 고장 여섯을 모두 우회한다.
 
 ## 2022년 코드가 2026년에 깨지는 지점 — 여섯
 
